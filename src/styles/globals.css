@@ -1,5 +1,54 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Antique+B1:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round:wght@100;300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@100;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@100;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600;700;800;900&display=swap');
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-family-prompt: 'Prompt', sans-serif;
+  --font-family-roboto: 'Roboto', sans-serif;
+  --font-family-oxygen: 'Oxygen', sans-serif;
+  --font-family-inter: 'Inter', sans-serif;
+  --font-family-shippori: 'Shippori Antique B1', sans-serif
+  --font-family-ubuntu: 'Ubuntu', sans-serif;
+  --font-family-varela: 'Varela Round', sans-serif;
+  --font-family-work-sans: 'Work Sans', sans-serif;
+  --font-family-fira-code: 'Fira Code', monospace;
+  --font-family-montserrat: 'Montserrat', sans-serif;
+  --font-family-ubuntu: 'Ubuntu', sans-serif;
+  
+  --font-family-audiowide: 'Audiowide', 'Noto Sans JP', sans-serif;
+  --color-cyber-pink: #ff2a6d;
+  --color-cyber-blue: #05d9fe;
+  --color-cyber-purple: #d300c5;
+  --color-cyber-magenta: #ec1d88;
+  --color-cyber-teal: #00f1ff;
+  --color-cyber-dark: #0d0221;
+  --color-cyber-gray: #1e1e2e;
+  --color-cyber-neon: #ff2a6d;
+  --color-cyberneotic-grape: #7d12ff;
+  --color-cyberneotic-lavender: #ab20fd;
+  --color-cyberneotic-blue: #200589;
+  --color-cyberneotic-white: #fbf8fd;
+  --color-cyberpunk-emerald: #00ff9f;
+  --color-cyberpunk-sky: #00b8ff;
+  --color-cyberpunk-royal-blue: #001eff;
+  --color-cyberpunk-purple: #bd00ff;
+  --color-cyberpunk-violet: #d600ff;
+  --color-cyberpunk-neon: #ff2a6d;
+      
+  
+
+}
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +72,9 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@theme inline {
+  --animate-spin: spin 1s linear infinite;
+  --animate-slow-spin: spin 3s linear infinite;
 }
