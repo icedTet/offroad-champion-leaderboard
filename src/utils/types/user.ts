@@ -1,3 +1,5 @@
+import { LeaderboardEntry, MergedEntry } from "./leaderboard";
+
 export type PublicUser = {
     id: string;
     username: string;
@@ -5,6 +7,15 @@ export type PublicUser = {
     avatarURL?: string; // Optional, URL to the user's avatar image
     name: string;
 }
+export const mergeUsers = (
+    entries: LeaderboardEntry[],
+    users: Record<string, PublicUser>
+  ) => {
+    return entries.map((entry) => ({
+      ...entry,
+      user: users[entry.userId],
+    })) as MergedEntry[];
+  };
 
 export const userDictionary: Record<string, PublicUser> = {
     "user_001": {

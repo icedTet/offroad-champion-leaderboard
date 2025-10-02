@@ -3,8 +3,8 @@
 import LeaderboardPreview from "../components/LeaderboardPreview";
 import { RecentEvents } from "../components/RecentEvents";
 import { dummyEvents } from "../utils/types/events";
-import { LeaderboardData, LeaderboardEntry, MergedEntry } from "../utils/types/leaderboard";
-import { PublicUser } from "../utils/types/user";
+import { LeaderboardData, MergedEntry } from "../utils/types/leaderboard";
+import { mergeUsers } from "../utils/types/user";
 
 type DashboardLeaderboardPageProps = {
     dailySinglePlayer: LeaderboardData<MergedEntry>;
@@ -17,7 +17,7 @@ type DashboardLeaderboardPageProps = {
 
 export const DashboardLeaderboardPage = (props: DashboardLeaderboardPageProps) => {
   return (
-    <div className={`flex flex-col gap-8 w-full min-h-screen relative overflow-hidden`}
+    <div className={`flex flex-col gap-8 w-full min-h-screen relative overflow-clip`}
     >
       <div className="absolute top-0 left-0 w-full h-full animate-[spin_20s_ease_infinite] scale-200 dark:opacity-30 dark:saturate-200"     style={{
       background: `radial-gradient(at 2% 50%, hsla(275,79%,74%,0.4) 0px, transparent 50%),
@@ -48,15 +48,7 @@ export const DashboardLeaderboardPage = (props: DashboardLeaderboardPageProps) =
 export default DashboardLeaderboardPage;
 
 export const getServerSideProps = async () => {
-  const mergeUsers = (
-    entries: LeaderboardEntry[],
-    users: Record<string, PublicUser>
-  ) => {
-    return entries.map((entry) => ({
-      ...entry,
-      user: users[entry.userId],
-    })) as MergedEntry[];
-  };
+  
 
   const users = (await import("../utils/types/user")).userDictionary;
 

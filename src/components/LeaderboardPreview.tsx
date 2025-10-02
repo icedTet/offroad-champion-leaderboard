@@ -15,6 +15,7 @@ import {
 
   EyeIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export const LeaderboardPreview = (props: {
   leaderboard: Leaderboard;
@@ -22,7 +23,7 @@ export const LeaderboardPreview = (props: {
 }) => {
   const { leaderboard, entries } = props;
   return (
-    <div className="p-6 py-8 border border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-zinc-700/80 dark:via-zinc-800/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full flex flex-col gap-4">
+    <div className="p-6 py-8 border border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-zinc-800/80 dark:via-zinc-900/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full flex flex-col gap-4">
       <div
         className={`border border-gray-900/10 dark:border-gray-100/10 p-2 rounded-lg dark:bg-zinc-900/50 flex flex-row items-center gap-4 w-fit px-6`}
       >
@@ -111,12 +112,13 @@ export const LeaderboardPreview = (props: {
                 <span
                   className={`text-gray-600 dark:text-gray-300 w-24 text-end`}
                 >
-                  {dayjs.duration(entry.time).format("mm:ss:SSS")}
+
+                  {dayjs.duration(Math.floor(Array.from(entry.races).reduce((acc, race) => acc + race.time, 0) / entry.races.length)).format("mm:ss:SSS")}
                 </span>
                 <span
                   className={`text-gray-600 dark:text-gray-300 w-24 text-end`}
                 >
-                  {entry.races} Races
+                  {entry.races.length} Races
                 </span>
               </div>
             </div>
@@ -124,12 +126,12 @@ export const LeaderboardPreview = (props: {
         ))}
       </div>
       <div className={`flex flex-row justify-end`}>
-        <div className={`px-4 py-2 bg-gray-200 dark:bg-zinc-950 dark:border-zinc-100/20 shadow-2xl rounded-full flex flex-row gap-2 items-center cursor-pointer hover:dark:bg-gray-50 hover:dark:text-gray-900 hover:bg-gray-900 hover:text-gray-100 transition-all duration-200`}>
+        <Link className={`px-4 py-2 bg-gray-200 dark:bg-zinc-950 dark:border-zinc-100/20 shadow-2xl rounded-full flex flex-row gap-2 items-center cursor-pointer hover:dark:bg-gray-50 hover:dark:text-gray-900 hover:bg-gray-900 hover:text-gray-100 transition-all duration-200`} href={`/leaderboards/${leaderboard.id}`}>
           <EyeIcon
             className={`h-6 w-6 inline-block mr-1`}
           />
           <span className={`text-sm font-bold font-family-montserrat`}>View Leaderboard</span>
-        </div>
+        </Link>
       </div>
     </div>
   );

@@ -27,25 +27,8 @@
   --font-family-ubuntu: 'Ubuntu', sans-serif;
   
   --font-family-audiowide: 'Audiowide', 'Noto Sans JP', sans-serif;
-  --color-cyber-pink: #ff2a6d;
-  --color-cyber-blue: #05d9fe;
-  --color-cyber-purple: #d300c5;
-  --color-cyber-magenta: #ec1d88;
-  --color-cyber-teal: #00f1ff;
-  --color-cyber-dark: #0d0221;
-  --color-cyber-gray: #1e1e2e;
-  --color-cyber-neon: #ff2a6d;
-  --color-cyberneotic-grape: #7d12ff;
-  --color-cyberneotic-lavender: #ab20fd;
-  --color-cyberneotic-blue: #200589;
-  --color-cyberneotic-white: #fbf8fd;
-  --color-cyberpunk-emerald: #00ff9f;
-  --color-cyberpunk-sky: #00b8ff;
-  --color-cyberpunk-royal-blue: #001eff;
-  --color-cyberpunk-purple: #bd00ff;
-  --color-cyberpunk-violet: #d600ff;
-  --color-cyberpunk-neon: #ff2a6d;
-      
+  /* --color-client-purple */
+  /* -- */
   
 
 }
@@ -78,3 +61,4 @@ body {
   --animate-spin: spin 1s linear infinite;
   --animate-slow-spin: spin 3s linear infinite;
 }
+
