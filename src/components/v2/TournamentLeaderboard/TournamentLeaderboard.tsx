@@ -87,7 +87,7 @@ export const TournamentLeaderboard = ({
       {/* See More Button */}
       {entries.length > initialDisplayCount && (
         <div className="flex justify-end mt-4">
-          <Link href={`/leaderboards/${leaderboardId}`}>
+          <Link href={`/leaderboard/${leaderboardId}`}>
             <button className="text-yellow-500 border border-yellow-500 px-4 py-2 rounded-full text-sm hover:bg-yellow-500 hover:text-black transition-colors font-family-inter">
               See More
             </button>
