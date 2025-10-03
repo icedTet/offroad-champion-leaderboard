@@ -7,7 +7,6 @@ import { TournamentLeaderboard } from "../components/v2/TournamentLeaderboard/To
 import { dailyTournamentEntries } from "../utils/types/dummy/daily";
 import { multiplayerTournamentEntries } from "../utils/types/dummy/dailymulti";
 import { userDictionary, mergeUsers } from "../utils/types/user";
-import { useEffect, useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,18 +19,6 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
-  const [showWarning, setShowWarning] = useState(false);
-
-  useEffect(() => {
-    const checkWidth = () => {
-      setShowWarning(window.innerWidth < 1560);
-    };
-
-    checkWidth();
-    window.addEventListener("resize", checkWidth);
-    return () => window.removeEventListener("resize", checkWidth);
-  }, []);
-
   // Merge entries with user data and sort by fastest time
   const mergedSingleEntries = mergeUsers(dailyTournamentEntries, userDictionary);
   const sortedSingleEntries = mergedSingleEntries
@@ -51,7 +38,7 @@ export default function Home() {
 
   return (
     <div
-      className={`${geistSans.className} ${geistMono.className} font-sans grid grid-rows-[20px_1fr_20px] items-start justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 relative`}
+      className={`${geistSans.className} ${geistMono.className} font-sans grid grid-rows-[20px_1fr_20px] items-start justify-items-center min-h-screen p-4 pb-12 gap-8 md:p-6 md:pb-16 md:gap-12 lg:p-8 lg:pb-20 lg:gap-16 relative`}
     >
       {/* Background Gradient */}
       <svg className="absolute inset-0 w-full h-full -z-10" viewBox="0 0 2906 3521" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
@@ -64,27 +51,17 @@ export default function Home() {
         </defs>
       </svg>
 
-      {/* Screen Width Warning */}
-      {showWarning && (
-        <div className="fixed top-4 right-4 bg-yellow-500 text-black px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2">
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          <span className="text-sm font-medium">Screen width below 1560px - some content may not display optimally</span>
-        </div>
-      )}
-
-      <main className="flex flex-col gap-8 row-start-2 max-w-7xl w-full">
+      <main className="flex flex-col gap-4 md:gap-6 lg:gap-8 row-start-2 max-w-7xl w-full">
         {/* Top Section - Recent Events and Podium */}
-        <div className="grid grid-cols-2 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-stretch">
           <RecentEvents events={dummyEvents} />
           <Podium entries={sortedSingleEntries} />
         </div>
 
         {/* Tournament Leaderboards - 2x3 Grid */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 lg:gap-6">
           {/* Single-Player Column */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4 md:gap-5 lg:gap-6">
             <TournamentLeaderboard
               title="Single-Player: Daily Tournament:"
               date="2/5/2024"
@@ -126,7 +103,7 @@ export default function Home() {
           </div>
 
           {/* Multi-Player Column */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4 md:gap-5 lg:gap-6">
             <TournamentLeaderboard
               title="Multi-Player: Daily Tournament:"
               date="2/5/2024"

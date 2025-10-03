@@ -22,34 +22,34 @@ export const RecentEvent = (props: { event: TournamentEvent }) => {
             className={`w-10 h-10`}
           />
         </div>
-        <div className={`flex flex-col gap-0`}>
-          <h5 className={`font-bold text-base`}>{event.name}</h5>
-          <span className={`text-sm font-semibold`}>
+        <div className={`flex flex-col gap-0 min-w-0 flex-1`}>
+          <h5 className={`font-bold text-base truncate`}>{event.name}</h5>
+          <span className={`text-sm font-semibold truncate`}>
             {dayjs(event.startDate).format("M/D/YYYY")}
           </span>
-          <span className={`text-xs text-gray-400`}>
+          <span className={`text-xs text-gray-400 truncate`}>
             {new Date(event.endDate) > new Date() ? "Ends" : "Ended"}{" "}
             {dayjs(event.endDate).fromNow()}
           </span>
         </div>
       </div>
       <div className={`flex flex-col gap-4`}>
-        <div className={`flex flex-row gap-2 items-end `}>
+        <div className={`flex flex-row gap-2 items-end min-w-0`}>
           <img
             src="assets/winner.svg"
             alt="Winner Icon"
-            className={`w-6 h-6`}
+            className={`w-6 h-6 flex-shrink-0`}
           />
-          <span className={`text-sm font-bold text-amber-400`}>Winner:</span>
-          <div className={`flex flex-row gap-2 items-baseline`}>
-            <span className={`text-sm font-medium text-gray-400`}>
+          <span className={`text-sm font-bold text-amber-400 flex-shrink-0`}>Winner:</span>
+          <div className={`flex flex-row gap-2 items-baseline min-w-0 flex-1`}>
+            <span className={`text-sm font-medium text-gray-400 flex-shrink-0`}>
               {userDictionary[event.winningUserId ?? ""]?.countryCode
                 ? getUnicodeFlagIcon(
                     userDictionary[event.winningUserId ?? ""]?.countryCode ?? ""
                   )
                 : "🏳️"}
             </span>
-            <span className={`text-sm font-medium`}>
+            <span className={`text-sm font-medium truncate`}>
               {userDictionary[event.winningUserId ?? ""]?.username ?? "TBD"}
             </span>
           </div>

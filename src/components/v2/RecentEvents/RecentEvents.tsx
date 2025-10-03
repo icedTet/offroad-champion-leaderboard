@@ -6,11 +6,11 @@ export const RecentEvents = (props: { events: TournamentEvent[] }) => {
   const { events } = props;
   return (
     <div className={`flex flex-col h-full`}>
-      <h4 className="text-xl font-bold font-family-inter pl-4 mb-4">
+      <h4 className="text-xl font-bold font-family-inter pl-2 md:pl-3 lg:pl-4 mb-2 md:mb-3 lg:mb-4">
         Recent Tournament Events
       </h4>
       <div
-        className={`flex flex-col gap-8 border border-purple-500 p-8 rounded-lg font-family-inter flex-1`}
+        className={`flex flex-col gap-4 md:gap-6 lg:gap-8 border border-purple-500 p-4 md:p-6 lg:p-8 rounded-lg font-family-inter flex-1`}
       >
         {events.map((event) => (
           <RecentEvent key={event.id} event={event} />

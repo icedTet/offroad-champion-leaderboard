@@ -38,15 +38,15 @@ export const StandingsRow = ({
   };
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-2 md:gap-3">
       {/* Place Card */}
       <div
-        className={`flex items-center justify-center p-4 border border-[#3D3356] rounded-lg cursor-pointer hover:bg-[#2A1F4A]/40 transition-colors self-start ${
+        className={`flex items-center justify-center p-2 md:p-3 lg:p-4 border border-[#3D3356] rounded-lg cursor-pointer hover:bg-[#2A1F4A]/40 transition-colors self-start ${
           isWinner ? "bg-[#2A1F4A]/60" : "bg-[#1A1331]"
         }`}
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="text-white text-xl font-bold min-w-[40px] text-center">
+        <div className="text-white text-lg md:text-xl font-bold min-w-[30px] md:min-w-[40px] text-center">
           {place}
         </div>
       </div>
@@ -54,7 +54,7 @@ export const StandingsRow = ({
       {/* Main Content Card with Dropdown */}
       <div className="flex-1">
         <div
-          className={`grid grid-cols-[1fr_100px_100px_140px] items-center p-4 border border-[#3D3356] ${
+          className={`grid grid-cols-[1fr_auto] lg:grid-cols-[1fr_100px_100px_140px] items-center p-2 md:p-3 lg:p-4 border border-[#3D3356] ${
             isExpanded ? "rounded-t-lg border-b-0" : "rounded-lg"
           } cursor-pointer hover:bg-[#2A1F4A]/40 transition-colors ${
             isWinner ? "bg-[#2A1F4A]/60" : "bg-[#1A1331]"
@@ -62,21 +62,21 @@ export const StandingsRow = ({
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {/* Player */}
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">{countryFlag}</span>
-            <span className="text-white text-base">{username}</span>
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-2xl flex-shrink-0">{countryFlag}</span>
+            <span className="text-white text-base truncate">{username}</span>
             {isWinner && (
-              <span className="text-orange-400 text-base font-bold">
+              <span className="text-orange-400 text-base font-bold flex-shrink-0">
                 Winner!
               </span>
             )}
           </div>
 
           {/* Race */}
-          <div className="text-white text-base text-center">{raceCount}</div>
+          <div className="hidden lg:block text-white text-base text-center truncate">{raceCount}</div>
 
           {/* Qualify */}
-          <div className="flex justify-center">
+          <div className="hidden lg:flex justify-center">
             {qualified ? (
               <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -97,8 +97,8 @@ export const StandingsRow = ({
           </div>
 
           {/* Best time */}
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-white text-lg">{bestTime}</span>
+          <div className="flex items-center justify-center lg:justify-center gap-2">
+            <span className="text-white text-base lg:text-lg">{bestTime}</span>
             <svg
               className={`w-4 h-4 text-gray-400 transition-transform ${
                 isExpanded ? "rotate-180" : ""

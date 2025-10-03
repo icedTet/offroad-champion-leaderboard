@@ -163,16 +163,16 @@ export const LeaderboardPage = (props: {
         />
       </div>
       <div
-        className={`relative max-w-7xl h-auto z-10 mx-auto py-24 gap-16 flex flex-col px-16`}
+        className={`relative max-w-7xl h-auto z-10 mx-auto py-8 md:py-16 lg:py-24 gap-8 md:gap-12 lg:gap-16 flex flex-col px-4 md:px-8 lg:px-16`}
       >
-        <div className={`absolute top-8 right-8`}>
+        <div className={`absolute top-4 md:top-8 right-4 md:right-8`}>
             {
                 Date.now() < new Date(leaderboard.endDate).getTime() ? (
-                    <span className="px-6 py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
+                    <span className="px-3 py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 text-sm md:text-base font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
                         Ongoing {dayjs(leaderboard.endDate).fromNow()}
                     </span>
                 ) : (
-                    <span className="px-6 py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
+                    <span className="px-3 py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 text-sm md:text-base font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
                         Ended {dayjs(leaderboard.endDate).fromNow()}
                     </span>
                 )
@@ -180,22 +180,22 @@ export const LeaderboardPage = (props: {
             }
             </div>
         <div
-          className={`flex flex-row gap-8 relative p-8 py-8 border border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl bg-gradient-to-br dark:from-zinc-800/80 dark:via-zinc-900/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full`}
+          className={`flex flex-row gap-4 md:gap-6 lg:gap-8 relative p-4 md:p-6 lg:p-8 border border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl bg-gradient-to-br dark:from-zinc-800/80 dark:via-zinc-900/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full`}
         >
-          <img src={"/logo.png"} alt="logo" className="h-16 w-16" />
+          <img src={"/logo.png"} alt="logo" className="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16" />
           <div className={`flex flex-col gap-2`}>
-            <h1 className={`text-4xl font-bold font-family-inter`}>
+            <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold font-family-inter`}>
               {leaderboard.name}
             </h1>
-            <p className={`text-lg font-family-inter`}>
+            <p className={`text-base md:text-lg font-family-inter`}>
               {leaderboard.description}
             </p>
           </div>
         </div>
-        <div className={`grid grid-cols-3 gap-8`}>
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8`}>
           {/* Second place */}
           <div
-            className={`p-6 py-8 border ring-4 ring-gray-600 border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-zinc-800/80 dark:via-zinc-900/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full flex flex-col gap-4 scale-95`}
+            className={`p-4 md:p-5 lg:p-6 py-6 md:py-7 lg:py-8 border ring-4 ring-gray-600 border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-zinc-800/80 dark:via-zinc-900/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full flex flex-col gap-3 md:gap-4 scale-95`}
           >
             {/* Second place */}
             <div className={`flex flex-col gap-2 items-start`}>
@@ -243,7 +243,7 @@ export const LeaderboardPage = (props: {
           </div>
           {/* First place */}
           <div
-            className={`p-6 py-8 ring-4 dark:ring-yellow-500 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-yellow-500/20 dark:via-yellow-600/20 dark:to-yellow-900/40 from-yellow/50 via-yellow-100/50 to-yellow-200/50 backdrop-blur-lg w-full flex flex-col gap-4 scale-100`}
+            className={`p-4 md:p-5 lg:p-6 py-6 md:py-7 lg:py-8 ring-4 dark:ring-yellow-500 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-yellow-500/20 dark:via-yellow-600/20 dark:to-yellow-900/40 from-yellow/50 via-yellow-100/50 to-yellow-200/50 backdrop-blur-lg w-full flex flex-col gap-3 md:gap-4 scale-100`}
           >
             <div className={`flex flex-col gap-2 items-start`}>
               <div className={`flex flex-row items-center gap-2 w-full`}>
@@ -290,7 +290,7 @@ export const LeaderboardPage = (props: {
           </div>
           {/* Third place */}
           <div
-            className={`p-6 py-8 ring-4 dark:ring-amber-700 ring-amber-800 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-amber-900/20 dark:via-amber-900/20 dark:to-amber-900/40 from-yellow/50 via-yellow-100/50 to-yellow-200/50 backdrop-blur-lg w-full flex flex-col gap-4 scale-90`}
+            className={`p-4 md:p-5 lg:p-6 py-6 md:py-7 lg:py-8 ring-4 dark:ring-amber-700 ring-amber-800 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-amber-900/20 dark:via-amber-900/20 dark:to-amber-900/40 from-yellow/50 via-yellow-100/50 to-yellow-200/50 backdrop-blur-lg w-full flex flex-col gap-3 md:gap-4 scale-90`}
           >
             <div className={`flex flex-col gap-2 items-start`}>
               <div className={`flex flex-row items-center gap-2 w-full`}>

@@ -1,10 +1,8 @@
 "use client";
-import { useRouter } from "next/router";
 import { ContestInfo } from "@/components/LeaderboardDetail/ContestInfo";
 import { StandingsRow } from "@/components/LeaderboardDetail/StandingsRow";
 import { dailyTournamentEntries } from "@/utils/types/dummy/daily";
 import { userDictionary, mergeUsers } from "@/utils/types/user";
-import { useEffect, useState } from "react";
 
 const trackNames: Record<string, string> = {
   track1: "Mountain Trace",
@@ -22,21 +20,6 @@ const trackNames: Record<string, string> = {
 };
 
 export default function LeaderboardDetail() {
-  const router = useRouter();
-  const _id = router.query.id;
-
-  const [showWarning, setShowWarning] = useState(false);
-
-  useEffect(() => {
-    const checkWidth = () => {
-      setShowWarning(window.innerWidth < 1560);
-    };
-
-    checkWidth();
-    window.addEventListener("resize", checkWidth);
-    return () => window.removeEventListener("resize", checkWidth);
-  }, []);
-
   // Merge and sort entries
   const mergedEntries = mergeUsers(dailyTournamentEntries, userDictionary);
   const sortedEntries = mergedEntries
@@ -68,47 +51,33 @@ export default function LeaderboardDetail() {
   const winner = sortedEntries[0];
 
   return (
-    <div className="min-h-screen bg-[#0B0A1B] p-8 font-family-inter relative">
-      {/* Screen Width Warning */}
-      {showWarning && (
-        <div className="fixed top-4 right-4 bg-yellow-500 text-black px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2">
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fillRule="evenodd"
-              d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span className="text-sm font-medium">Screen width below 1560px - some content may not display optimally</span>
-        </div>
-      )}
-
+    <div className="min-h-screen bg-[#0B0A1B] p-3 md:p-6 lg:p-8 font-family-inter relative">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 className="text-4xl font-bold text-orange-500 mb-2">
+        <div className="mb-4 md:mb-6 lg:mb-8">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-4 mb-4">
+            <div className="flex-1">
+              <h1 className="text-2xl lg:text-4xl font-bold text-orange-500 mb-2">
                 Single Player Daily Tournament
               </h1>
-              <p className="text-xl text-white mb-2">2/5/2025</p>
+              <p className="text-lg lg:text-xl text-white mb-2">2/5/2025</p>
               <p className="text-gray-400 text-sm">
                 All contestants must complete at least 10 levels to qualify.
               </p>
               <p className="text-gray-400 text-sm">Best race time of the day wins.</p>
             </div>
 
-            <div className="flex gap-8">
-              <div className="text-right">
+            <div className="flex gap-4 lg:gap-8 w-full lg:w-auto">
+              <div className="text-left lg:text-right flex-1 lg:flex-none">
                 <div className="text-gray-400 text-sm mb-1">Prize Pool</div>
                 <div className="flex items-center gap-2">
-                  <img src="/assets/coin.svg" alt="Prize" className="w-8 h-8" />
-                  <span className="text-white text-2xl font-bold">5 USD</span>
+                  <img src="/assets/coin.svg" alt="Prize" className="w-6 h-6 lg:w-8 lg:h-8" />
+                  <span className="text-white text-xl lg:text-2xl font-bold">5 USD</span>
                 </div>
               </div>
-              <div className="text-right">
+              <div className="text-left lg:text-right flex-1 lg:flex-none">
                 <div className="text-gray-400 text-sm mb-1">Players</div>
-                <div className="text-orange-500 text-2xl font-bold">{sortedEntries.length}</div>
+                <div className="text-orange-500 text-xl lg:text-2xl font-bold">{sortedEntries.length}</div>
               </div>
             </div>
           </div>
@@ -128,9 +97,9 @@ export default function LeaderboardDetail() {
         />
 
         {/* Standings */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-white mb-4">Standings</h2>
-          <div className="grid grid-cols-[80px_1fr_100px_100px_140px] items-center mb-4 px-4">
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4">Standings</h2>
+          <div className="hidden lg:grid grid-cols-[80px_1fr_100px_100px_140px] items-center mb-4 px-2 md:px-4">
             <div className="text-gray-400 text-sm text-center"></div>
             <div className="text-gray-400 text-sm">Race</div>
             <div className="text-gray-400 text-sm text-center">Qualify</div>
@@ -138,7 +107,7 @@ export default function LeaderboardDetail() {
             <div className="text-gray-400 text-sm text-center">Best time</div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2 md:space-y-3">
             {sortedEntries.map((entry, index) => (
               <StandingsRow
                 key={entry.userId}
@@ -156,8 +125,8 @@ export default function LeaderboardDetail() {
           </div>
         </div>
 
-        {/* Calendar Placeholder */}
-        <div className="fixed bottom-8 right-8 bg-purple-900/50 border border-purple-500 rounded-lg p-4 backdrop-blur-sm">
+        {/* Calendar Placeholder - Hidden on mobile */}
+        <div className="hidden lg:block fixed bottom-8 right-8 bg-purple-900/50 border border-purple-500 rounded-lg p-4 backdrop-blur-sm">
           <div className="text-red-500 text-sm mb-2 flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
             Ended 13 hours ago

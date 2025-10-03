@@ -30,16 +30,16 @@ export const LeaderboardRow = ({
       <div className="text-white text-lg">{place}</div>
 
       {/* Player */}
-      <div className="flex items-center gap-2">
-        <span className="text-2xl">{getCountryFlag(countryCode)}</span>
-        <span className="text-white text-base">{username}</span>
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="text-2xl flex-shrink-0">{getCountryFlag(countryCode)}</span>
+        <span className="text-white text-base truncate">{username}</span>
       </div>
 
       {/* Score */}
-      <div className="text-white text-base flex justify-center">{score}</div>
+      <div className="text-white text-base flex justify-center truncate">{score}</div>
 
       {/* Races */}
-      <div className="text-yellow-500 text-base flex justify-center font-semibold">
+      <div className="text-yellow-500 text-base flex justify-center font-semibold truncate">
         {races}
       </div>
 
