@@ -51,7 +51,7 @@ export default function Home() {
         </defs>
       </svg>
 
-      <main className="flex flex-col gap-4 md:gap-6 lg:gap-8 row-start-2 max-w-7xl w-full">
+      <main className="flex flex-col gap-4 md:gap-6 lg:gap-8 row-start-2 max-w-7xl w-full pt-4">
         {/* Top Section - Recent Events and Podium */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-stretch">
           <RecentEvents events={dummyEvents} />
