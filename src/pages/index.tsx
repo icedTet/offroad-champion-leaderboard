@@ -4,9 +4,13 @@ import { RecentEvents } from "../components/v2/RecentEvents/RecentEvents";
 import { dummyEvents } from "../utils/types/events";
 import { Podium } from "../components/v2/AllTimeBest/Podium";
 import { TournamentLeaderboard } from "../components/v2/TournamentLeaderboard/TournamentLeaderboard";
-import { dailyTournamentEntries } from "../utils/types/dummy/daily";
-import { multiplayerTournamentEntries } from "../utils/types/dummy/dailymulti";
-import { userDictionary, mergeUsers } from "../utils/types/user";
+import { MergedEntry } from "../utils/types/leaderboard";
+import { tournamentApi, LeaderboardResponse } from "../services/tournamentApi";
+import {
+  transformLeaderboardResponse,
+  generateLeaderboardId,
+  formatPrize,
+} from "../utils/apiTransformers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,23 +22,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function Home() {
-  // Merge entries with user data and sort by fastest time
-  const mergedSingleEntries = mergeUsers(dailyTournamentEntries, userDictionary);
-  const sortedSingleEntries = mergedSingleEntries
-    .map((entry) => ({
-      ...entry,
-      fastestTime: entry.races.length > 0 ? Math.min(...entry.races.map((r) => r.time)) : Infinity,
-    }))
-    .sort((a, b) => a.fastestTime - b.fastestTime);
+interface HomeProps {
+  dailySingleEntries: MergedEntry[];
+  dailyMultiEntries: MergedEntry[];
+  weeklySingleEntries: MergedEntry[];
+  weeklyMultiEntries: MergedEntry[];
+  monthlySingleEntries: MergedEntry[];
+  monthlyMultiEntries: MergedEntry[];
+}
 
-  const mergedMultiEntries = mergeUsers(multiplayerTournamentEntries, userDictionary);
-  const sortedMultiEntries = mergedMultiEntries
-    .map((entry) => ({
-      ...entry,
-      fastestTime: entry.races.length > 0 ? Math.min(...entry.races.map((r) => r.time)) : Infinity,
-    }))
-    .sort((a, b) => a.fastestTime - b.fastestTime);
+export default function Home({
+  dailySingleEntries,
+  dailyMultiEntries,
+  weeklySingleEntries,
+  weeklyMultiEntries,
+  monthlySingleEntries,
+  monthlyMultiEntries,
+}: HomeProps) {
 
   return (
     <div
@@ -55,7 +59,7 @@ export default function Home() {
         {/* Top Section - Recent Events and Podium */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-stretch">
           <RecentEvents events={dummyEvents} />
-          <Podium entries={sortedSingleEntries} />
+          <Podium entries={dailySingleEntries} />
         </div>
 
         {/* Tournament Leaderboards - 2x3 Grid */}
@@ -68,9 +72,9 @@ export default function Home() {
               type="Time Trials"
               description="Best times today"
               endedTime="3 hours ago"
-              memberCount={57}
+              memberCount={dailySingleEntries.length}
               prize="$5"
-              entries={sortedSingleEntries}
+              entries={dailySingleEntries}
               leaderboardId="daily"
               backgroundColor="bg-black"
             />
@@ -81,9 +85,9 @@ export default function Home() {
               type="Time Trials"
               description="Best weeks times"
               endedTime="21 hours ago"
-              memberCount={34}
+              memberCount={weeklySingleEntries.length}
               prize="$25"
-              entries={sortedSingleEntries}
+              entries={weeklySingleEntries}
               leaderboardId="weekly"
               backgroundColor="bg-[#0A0520]"
             />
@@ -94,9 +98,9 @@ export default function Home() {
               type="Time Trials"
               description="Best months times"
               endedTime="2 days ago"
-              memberCount={14}
+              memberCount={monthlySingleEntries.length}
               prize="$200"
-              entries={sortedSingleEntries}
+              entries={monthlySingleEntries}
               leaderboardId="monthly"
               backgroundColor="bg-black"
             />
@@ -110,9 +114,9 @@ export default function Home() {
               type="Time Trials"
               description="Best times today"
               endedTime="3 hours ago"
-              memberCount={57}
+              memberCount={dailyMultiEntries.length}
               prize="$5"
-              entries={sortedMultiEntries}
+              entries={dailyMultiEntries}
               leaderboardId="daily-multi"
               backgroundColor="bg-black"
             />
@@ -123,9 +127,9 @@ export default function Home() {
               type="Time Trials"
               description="Best weeks times"
               endedTime="3 hours ago"
-              memberCount={34}
+              memberCount={weeklyMultiEntries.length}
               prize="$25"
-              entries={sortedMultiEntries}
+              entries={weeklyMultiEntries}
               leaderboardId="weekly-multi"
               backgroundColor="bg-[#0A0520]"
             />
@@ -136,9 +140,9 @@ export default function Home() {
               type="Time Trials"
               description="Best months times"
               endedTime="3 hours ago"
-              memberCount={34}
+              memberCount={monthlyMultiEntries.length}
               prize="$200"
-              entries={sortedMultiEntries}
+              entries={monthlyMultiEntries}
               leaderboardId="monthly-multi"
               backgroundColor="bg-black"
             />
@@ -195,3 +199,112 @@ export default function Home() {
     </div>
   );
 }
+
+export const getServerSideProps = async () => {
+  try {
+    // Fetch all 6 leaderboards in parallel
+    const [
+      dailySPResponse,
+      dailyMPResponse,
+      weeklySPResponse,
+      weeklyMPResponse,
+      monthlySPResponse,
+      monthlyMPResponse,
+    ] = await Promise.all([
+      tournamentApi.getLeaderboard({
+        period: "daily",
+        mode: "singleplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "daily",
+        mode: "multiplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "weekly",
+        mode: "singleplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "weekly",
+        mode: "multiplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "monthly",
+        mode: "singleplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "monthly",
+        mode: "multiplayer",
+        limit: 100,
+      }),
+    ]);
+
+    // Transform all responses
+    const dailySPData = transformLeaderboardResponse(
+      dailySPResponse as LeaderboardResponse,
+      generateLeaderboardId("daily", "singleplayer")
+    );
+    const dailyMPData = transformLeaderboardResponse(
+      dailyMPResponse as LeaderboardResponse,
+      generateLeaderboardId("daily", "multiplayer")
+    );
+    const weeklySPData = transformLeaderboardResponse(
+      weeklySPResponse as LeaderboardResponse,
+      generateLeaderboardId("weekly", "singleplayer")
+    );
+    const weeklyMPData = transformLeaderboardResponse(
+      weeklyMPResponse as LeaderboardResponse,
+      generateLeaderboardId("weekly", "multiplayer")
+    );
+    const monthlySPData = transformLeaderboardResponse(
+      monthlySPResponse as LeaderboardResponse,
+      generateLeaderboardId("monthly", "singleplayer")
+    );
+    const monthlyMPData = transformLeaderboardResponse(
+      monthlyMPResponse as LeaderboardResponse,
+      generateLeaderboardId("monthly", "multiplayer")
+    );
+
+    // Sort all entries by fastest time
+    const sortByFastestTime = (entries: MergedEntry[]) => {
+      return entries
+        .map((entry) => ({
+          ...entry,
+          fastestTime:
+            entry.races.length > 0
+              ? Math.min(...entry.races.map((r) => r.time))
+              : Infinity,
+        }))
+        .sort((a, b) => a.fastestTime - b.fastestTime);
+    };
+
+    return {
+      props: {
+        dailySingleEntries: sortByFastestTime(dailySPData.entries),
+        dailyMultiEntries: sortByFastestTime(dailyMPData.entries),
+        weeklySingleEntries: sortByFastestTime(weeklySPData.entries),
+        weeklyMultiEntries: sortByFastestTime(weeklyMPData.entries),
+        monthlySingleEntries: sortByFastestTime(monthlySPData.entries),
+        monthlyMultiEntries: sortByFastestTime(monthlyMPData.entries),
+      },
+    };
+  } catch (error) {
+    console.error("Failed to fetch leaderboard data:", error);
+
+    // Return empty arrays on error
+    return {
+      props: {
+        dailySingleEntries: [],
+        dailyMultiEntries: [],
+        weeklySingleEntries: [],
+        weeklyMultiEntries: [],
+        monthlySingleEntries: [],
+        monthlyMultiEntries: [],
+      },
+    };
+  }
+};

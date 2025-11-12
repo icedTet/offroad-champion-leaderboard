@@ -1,8 +1,13 @@
-"use client";
 import { ContestInfo } from "@/components/LeaderboardDetail/ContestInfo";
 import { StandingsRow } from "@/components/LeaderboardDetail/StandingsRow";
-import { dailyTournamentEntries } from "@/utils/types/dummy/daily";
-import { userDictionary, mergeUsers } from "@/utils/types/user";
+import { MergedEntry } from "@/utils/types/leaderboard";
+import { GetServerSideProps } from "next";
+import { tournamentApi, LeaderboardResponse } from "@/services/tournamentApi";
+import {
+  transformLeaderboardResponse,
+  formatPrize,
+} from "@/utils/apiTransformers";
+import dayjs from "dayjs";
 
 const trackNames: Record<string, string> = {
   track1: "Mountain Trace",
@@ -19,18 +24,23 @@ const trackNames: Record<string, string> = {
   track12: "Savage Swamps",
 };
 
-export default function LeaderboardDetail() {
-  // Merge and sort entries
-  const mergedEntries = mergeUsers(dailyTournamentEntries, userDictionary);
-  const sortedEntries = mergedEntries
-    .map((entry) => ({
-      ...entry,
-      fastestTime:
-        entry.races.length > 0
-          ? Math.min(...entry.races.map((r) => r.time))
-          : Infinity,
-    }))
-    .sort((a, b) => a.fastestTime - b.fastestTime);
+interface LeaderboardDetailProps {
+  sortedEntries: Array<MergedEntry & { fastestTime: number }>;
+  leaderboardName: string;
+  startDate: string;
+  endDate: string;
+  prizeAmount: string;
+  qualifyingRaces: number;
+}
+
+export default function LeaderboardDetail({
+  sortedEntries,
+  leaderboardName,
+  startDate,
+  endDate,
+  prizeAmount,
+  qualifyingRaces,
+}: LeaderboardDetailProps) {
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -64,14 +74,16 @@ export default function LeaderboardDetail() {
               <div className="flex flex-col lg:flex-row items-start justify-between gap-4 mb-4">
                 <div className="flex-1">
                   <h1 className="text-2xl lg:text-4xl font-bold text-orange-500 mb-2">
-                    Single Player Daily Tournament
+                    {leaderboardName}
                   </h1>
-                  <p className="text-lg lg:text-xl text-white mb-2">2/5/2025</p>
-                  <p className="text-gray-400 text-sm">
-                    All contestants must complete at least 10 levels to qualify.
+                  <p className="text-lg lg:text-xl text-white mb-2">
+                    {dayjs(startDate).format("M/D/YYYY")}
                   </p>
                   <p className="text-gray-400 text-sm">
-                    Best race time of the day wins.
+                    All contestants must complete at least {qualifyingRaces} races to qualify.
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    Best race time wins.
                   </p>
                 </div>
 
@@ -85,7 +97,7 @@ export default function LeaderboardDetail() {
                         className="w-6 h-6 lg:w-8 lg:h-8"
                       />
                       <span className="text-white text-xl lg:text-2xl font-bold">
-                        5 USD
+                        {prizeAmount}
                       </span>
                     </div>
                   </div>
@@ -201,3 +213,81 @@ export default function LeaderboardDetail() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const leaderboardId = context.params?.id as string;
+
+  // Parse leaderboard ID to determine period and mode
+  const isMultiplayer = leaderboardId.endsWith("-multi");
+  const mode = isMultiplayer ? "multiplayer" : "singleplayer";
+
+  let period: "daily" | "weekly" | "monthly";
+  if (leaderboardId.startsWith("daily")) {
+    period = "daily";
+  } else if (leaderboardId.startsWith("weekly")) {
+    period = "weekly";
+  } else if (leaderboardId.startsWith("monthly")) {
+    period = "monthly";
+  } else {
+    period = "daily";
+  }
+
+  try {
+    // Fetch prize configuration
+    const prizes = await tournamentApi.getPrizes();
+
+    // Fetch leaderboard data
+    const response = await tournamentApi.getLeaderboard({
+      period,
+      mode,
+      limit: 500,
+    });
+
+    const apiResponse = response as LeaderboardResponse;
+
+    // Get the appropriate prize
+    const prize = prizes[period][mode].first;
+
+    // Transform response
+    const leaderboardData = transformLeaderboardResponse(
+      apiResponse,
+      leaderboardId,
+      formatPrize(prize)
+    );
+
+    // Sort by fastest time
+    const sortedEntries = leaderboardData.entries
+      .map((entry) => ({
+        ...entry,
+        fastestTime:
+          entry.races.length > 0
+            ? Math.min(...entry.races.map((r) => r.time))
+            : Infinity,
+      }))
+      .sort((a, b) => a.fastestTime - b.fastestTime);
+
+    return {
+      props: {
+        sortedEntries,
+        leaderboardName: leaderboardData.leaderboard.name,
+        startDate: apiResponse.tournament.startDate,
+        endDate: apiResponse.tournament.endDate,
+        prizeAmount: formatPrize(prize),
+        qualifyingRaces: apiResponse.tournament.qualifyingRaces,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to fetch leaderboard data:", error);
+
+    return {
+      props: {
+        sortedEntries: [],
+        leaderboardName: "Tournament",
+        startDate: new Date().toISOString(),
+        endDate: new Date().toISOString(),
+        prizeAmount: "$0.00",
+        qualifyingRaces: 10,
+      },
+    };
+  }
+};

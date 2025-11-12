@@ -4,7 +4,12 @@ import LeaderboardPreview from "../components/LeaderboardPreview";
 import { RecentEvents } from "../components/RecentEvents";
 import { dummyEvents } from "../utils/types/events";
 import { LeaderboardData, MergedEntry } from "../utils/types/leaderboard";
-import { mergeUsers } from "../utils/types/user";
+import { tournamentApi, LeaderboardResponse } from "../services/tournamentApi";
+import {
+  transformLeaderboardResponse,
+  generateLeaderboardId,
+  formatPrize,
+} from "../utils/apiTransformers";
 
 type DashboardLeaderboardPageProps = {
     dailySinglePlayer: LeaderboardData<MergedEntry>;
@@ -48,72 +53,112 @@ export const DashboardLeaderboardPage = (props: DashboardLeaderboardPageProps) =
 export default DashboardLeaderboardPage;
 
 export const getServerSideProps = async () => {
-  
+  try {
+    // Fetch prize configuration first
+    const prizes = await tournamentApi.getPrizes();
 
-  const users = (await import("../utils/types/user")).userDictionary;
+    // Fetch all 6 leaderboards in parallel
+    const [
+      dailySPResponse,
+      dailyMPResponse,
+      weeklySPResponse,
+      weeklyMPResponse,
+      monthlySPResponse,
+      monthlyMPResponse,
+    ] = await Promise.all([
+      tournamentApi.getLeaderboard({
+        period: "daily",
+        mode: "singleplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "daily",
+        mode: "multiplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "weekly",
+        mode: "singleplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "weekly",
+        mode: "multiplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "monthly",
+        mode: "singleplayer",
+        limit: 100,
+      }),
+      tournamentApi.getLeaderboard({
+        period: "monthly",
+        mode: "multiplayer",
+        limit: 100,
+      }),
+    ]);
 
-  const dailySinglePlayer = {
-    leaderboard: (await import("../utils/types/dummy/daily"))
-      .dailyTournamentLeaderboard,
-    entries: mergeUsers(
-      (await import("../utils/types/dummy/daily")).dailyTournamentEntries,
-      users
-    ),
-  };
-  const dailyMultiplayer = {
-    leaderboard: (await import("../utils/types/dummy/dailymulti"))
-      .multiplayerTournamentLeaderboard,
-    entries: mergeUsers(
-      (await import("../utils/types/dummy/dailymulti"))
-        .multiplayerTournamentEntries,
-      users
-    ),
-  };
-  const weeklySinglePlayer = {
-    leaderboard: (await import("../utils/types/dummy/singleweekly"))
-      .singlePlayerWeeklyLeaderboard,
-    entries: mergeUsers(
-      (await import("../utils/types/dummy/singleweekly"))
-        .singlePlayerWeeklyEntries,
-      users
-    ),
-  };
-  const weeklyMultiplayer = {
-    leaderboard: (await import("../utils/types/dummy/multiplayerweekly"))
-      .multiplayerWeeklyLeaderboard,
-    entries: mergeUsers(
-      (await import("../utils/types/dummy/multiplayerweekly"))
-        .multiplayerWeeklyEntries,
-      users
-    ),
-  };
-  const monthlySinglePlayer = {
-    leaderboard: (await import("../utils/types/dummy/singlemonthly"))
-      .singlePlayerMonthlyLeaderboard,
-    entries: mergeUsers(
-      (await import("../utils/types/dummy/singlemonthly"))
-        .singlePlayerMonthlyEntries,
-      users
-    ),
-  };
-  const monthlyMultiplayer = {
-    leaderboard: (await import("../utils/types/dummy/multiplayermonthly"))
-      .multiplayerMonthlyLeaderboard,
-    entries: mergeUsers(
-      (await import("../utils/types/dummy/multiplayermonthly"))
-        .multiplayerMonthlyEntries,
-      users
-    ),
-  };
+    // Transform responses with prize information
+    const dailySinglePlayer = transformLeaderboardResponse(
+      dailySPResponse as LeaderboardResponse,
+      generateLeaderboardId("daily", "singleplayer"),
+      formatPrize(prizes.daily.singleplayer.first)
+    );
 
-  return {
-    props: {
-      dailySinglePlayer,
-      dailyMultiplayer,
-      weeklySinglePlayer,
-      weeklyMultiplayer,
-      monthlySinglePlayer,
-      monthlyMultiplayer,
-    } as DashboardLeaderboardPageProps,
-  };
+    const dailyMultiplayer = transformLeaderboardResponse(
+      dailyMPResponse as LeaderboardResponse,
+      generateLeaderboardId("daily", "multiplayer"),
+      formatPrize(prizes.daily.multiplayer.first)
+    );
+
+    const weeklySinglePlayer = transformLeaderboardResponse(
+      weeklySPResponse as LeaderboardResponse,
+      generateLeaderboardId("weekly", "singleplayer"),
+      formatPrize(prizes.weekly.singleplayer.first)
+    );
+
+    const weeklyMultiplayer = transformLeaderboardResponse(
+      weeklyMPResponse as LeaderboardResponse,
+      generateLeaderboardId("weekly", "multiplayer"),
+      formatPrize(prizes.weekly.multiplayer.first)
+    );
+
+    const monthlySinglePlayer = transformLeaderboardResponse(
+      monthlySPResponse as LeaderboardResponse,
+      generateLeaderboardId("monthly", "singleplayer"),
+      formatPrize(prizes.monthly.singleplayer.first)
+    );
+
+    const monthlyMultiplayer = transformLeaderboardResponse(
+      monthlyMPResponse as LeaderboardResponse,
+      generateLeaderboardId("monthly", "multiplayer"),
+      formatPrize(prizes.monthly.multiplayer.first)
+    );
+
+    return {
+      props: {
+        dailySinglePlayer,
+        dailyMultiplayer,
+        weeklySinglePlayer,
+        weeklyMultiplayer,
+        monthlySinglePlayer,
+        monthlyMultiplayer,
+      } as DashboardLeaderboardPageProps,
+    };
+  } catch (error) {
+    console.error("Failed to fetch leaderboard data:", error);
+
+    // Return empty leaderboards on error
+    // You can also return a fallback to dummy data if preferred
+    return {
+      props: {
+        dailySinglePlayer: { leaderboard: {} as any, entries: [] },
+        dailyMultiplayer: { leaderboard: {} as any, entries: [] },
+        weeklySinglePlayer: { leaderboard: {} as any, entries: [] },
+        weeklyMultiplayer: { leaderboard: {} as any, entries: [] },
+        monthlySinglePlayer: { leaderboard: {} as any, entries: [] },
+        monthlyMultiplayer: { leaderboard: {} as any, entries: [] },
+      } as DashboardLeaderboardPageProps,
+    };
+  }
 };

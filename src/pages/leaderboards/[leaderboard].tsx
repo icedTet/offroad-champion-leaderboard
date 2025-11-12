@@ -1,7 +1,6 @@
 import { hasFlag } from "country-flag-icons";
 import getUnicodeFlagIcon from "country-flag-icons/unicode";
 import { Leaderboard, MergedEntry } from "../../utils/types/leaderboard";
-import { mergeUsers } from "../../utils/types/user";
 import dayjs, { duration } from "dayjs";
 import durations from "dayjs/plugin/duration";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -9,6 +8,11 @@ import { Fragment, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { TrackDict } from "../../utils/types/track";
 import { GetServerSideProps } from "next";
+import { tournamentApi, LeaderboardResponse } from "../../services/tournamentApi";
+import {
+  transformLeaderboardResponse,
+  formatPrize,
+} from "../../utils/apiTransformers";
 dayjs.extend(durations);
 dayjs.extend(relativeTime);
 
@@ -371,20 +375,62 @@ export const LeaderboardPage = (props: {
 };
 export default LeaderboardPage;
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  // For now, we will use dummy data. Later, we will fetch from a database or API.
-  // You can replace this with actual data fetching logic based on the leaderboard parameter.
-  const { dailyTournamentLeaderboard, dailyTournamentEntries } = await import(
-    "../../utils/types/dummy/daily"
-  );
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const leaderboardId = context.params?.leaderboard as string;
 
-  return {
-    props: {
-      leaderboard: dailyTournamentLeaderboard,
-      entries: mergeUsers(
-        dailyTournamentEntries,
-        await import("../../utils/types/user").then((mod) => mod.userDictionary)
-      ),
-    },
-  };
+  // Parse leaderboard ID to determine period and mode
+  // Format: "daily", "weekly", "monthly" (singleplayer) or "daily-multi", "weekly-multi", "monthly-multi" (multiplayer)
+  const isMultiplayer = leaderboardId.endsWith("-multi");
+  const mode = isMultiplayer ? "multiplayer" : "singleplayer";
+
+  let period: "daily" | "weekly" | "monthly";
+  if (leaderboardId.startsWith("daily")) {
+    period = "daily";
+  } else if (leaderboardId.startsWith("weekly")) {
+    period = "weekly";
+  } else if (leaderboardId.startsWith("monthly")) {
+    period = "monthly";
+  } else {
+    // Default to daily if not recognized
+    period = "daily";
+  }
+
+  try {
+    // Fetch prize configuration
+    const prizes = await tournamentApi.getPrizes();
+
+    // Fetch leaderboard data
+    const response = await tournamentApi.getLeaderboard({
+      period,
+      mode,
+      limit: 500, // Get more entries for detailed leaderboard page
+    });
+
+    // Get the appropriate prize
+    const prize = prizes[period][mode].first;
+
+    // Transform response
+    const leaderboardData = transformLeaderboardResponse(
+      response as LeaderboardResponse,
+      leaderboardId,
+      formatPrize(prize)
+    );
+
+    return {
+      props: {
+        leaderboard: leaderboardData.leaderboard,
+        entries: leaderboardData.entries,
+      },
+    };
+  } catch (error) {
+    console.error("Failed to fetch leaderboard data:", error);
+
+    // Return empty data on error
+    return {
+      props: {
+        leaderboard: {} as Leaderboard,
+        entries: [],
+      },
+    };
+  }
 };
