@@ -41,9 +41,9 @@ export const Podium = ({ entries }: PodiumProps) => {
         Best of Off-Road Champion
       </h4>
       <div className="border border-purple-500 rounded-lg p-4 md:p-6 lg:p-8 font-family-inter flex-1">
-        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-4 md:gap-6 lg:gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-center lg:items-start gap-4 md:gap-6 lg:gap-8">
           {/* Podium Display */}
-          <div className="flex items-end justify-center gap-2 scale-100 w-max lg:w-auto">
+          <div className="flex items-end justify-center gap-2 scale-100 w-max lg:w-auto h-full">
             {podiumOrder.map((entry, idx) => {
               if (!entry) return null;
               const position = idx === 1 ? 1 : idx === 0 ? 2 : 3;
@@ -53,7 +53,7 @@ export const Podium = ({ entries }: PodiumProps) => {
                 <div
                   key={entry.userId}
                   className="flex flex-col items-center grow-0 shrink-0"
-                  style={{ marginBottom: isFirst ? "0px" : "-40px" }}
+                  style={{ marginBottom: isFirst ? "0px" : "-20px" }}
                 >
                   {/* Shield Icon */}
                   <div className="relative mb-4">
