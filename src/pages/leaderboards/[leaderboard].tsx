@@ -1,9 +1,6 @@
 import { hasFlag } from "country-flag-icons";
 import getUnicodeFlagIcon from "country-flag-icons/unicode";
-import {
-  Leaderboard,
-  MergedEntry,
-} from "../../utils/types/leaderboard";
+import { Leaderboard, MergedEntry } from "../../utils/types/leaderboard";
 import { mergeUsers } from "../../utils/types/user";
 import dayjs, { duration } from "dayjs";
 import durations from "dayjs/plugin/duration";
@@ -59,9 +56,7 @@ const TableRow = ({ entry, idx }: { entry: MergedEntry; idx: number }) => {
             getUnicodeFlagIcon(entry.user.countryCode ?? "")) ||
             "🌐"}
           <span className="font-bold">{entry.user.name}</span>
-          <span className="text-xs text-gray-500">
-            @{entry.user.username}
-          </span>
+          <span className="text-xs text-gray-500">@{entry.user.username}</span>
         </td>
         <td className="px-4 py-6">{avgTime}</td>
         <td className="px-4 py-6">{entry.races.length}</td>
@@ -86,15 +81,8 @@ const TableRow = ({ entry, idx }: { entry: MergedEntry; idx: number }) => {
           </button>
         </td>
       </tr>
-      <tr
-        className={`${
-          open ? "" : "hidden"
-        } bg-gray-50 dark:bg-zinc-900/50`}
-      >
-        <td
-          colSpan={6}
-          className="px-4 py-6 bg-gray-50/40 dark:bg-zinc-900/0"
-        >
+      <tr className={`${open ? "" : "hidden"} bg-gray-50 dark:bg-zinc-900/50`}>
+        <td colSpan={6} className="px-4 py-6 bg-gray-50/40 dark:bg-zinc-900/0">
           <table
             key={`races-${entry.user.id}`}
             className="min-w-full divide-y divide-gray-200 dark:divide-gray-700/50 overflow-hidden"
@@ -106,9 +94,7 @@ const TableRow = ({ entry, idx }: { entry: MergedEntry; idx: number }) => {
                 <th className="px-4 py-2 text-left font-semibold">
                   Track Name
                 </th>
-                <th className="px-4 py-2 text-left font-semibold w-16">
-                  Time
-                </th>
+                <th className="px-4 py-2 text-left font-semibold w-16">Time</th>
                 <th className="px-4 py-2 font-semibold w-40 text-right">
                   Date
                 </th>
@@ -166,25 +152,28 @@ export const LeaderboardPage = (props: {
         className={`relative max-w-7xl h-auto z-10 mx-auto py-8 md:py-16 lg:py-24 gap-8 md:gap-12 lg:gap-16 flex flex-col px-4 md:px-8 lg:px-16`}
       >
         <div className={`absolute top-4 md:top-8 right-4 md:right-8`}>
-            {
-                Date.now() < new Date(leaderboard.endDate).getTime() ? (
-                    <span className="px-3 py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 text-sm md:text-base font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
-                        Ongoing {dayjs(leaderboard.endDate).fromNow()}
-                    </span>
-                ) : (
-                    <span className="px-3 py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 text-sm md:text-base font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
-                        Ended {dayjs(leaderboard.endDate).fromNow()}
-                    </span>
-                )
-
-            }
-            </div>
+          {Date.now() < new Date(leaderboard.endDate).getTime() ? (
+            <span className="px-3 py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 text-sm md:text-base font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
+              Ongoing {dayjs(leaderboard.endDate).fromNow()}
+            </span>
+          ) : (
+            <span className="px-3 py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 dark:bg-zinc-900/40 bg-gray-100/40 text-gray-800 dark:text-gray-200 text-sm md:text-base font-semibold rounded-xl border border-gray-900/20 dark:border-gray-100/30">
+              Ended {dayjs(leaderboard.endDate).fromNow()}
+            </span>
+          )}
+        </div>
         <div
           className={`flex flex-row gap-4 md:gap-6 lg:gap-8 relative p-4 md:p-6 lg:p-8 border border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl bg-gradient-to-br dark:from-zinc-800/80 dark:via-zinc-900/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full`}
         >
-          <img src={"/logo.png"} alt="logo" className="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16" />
+          <img
+            src={"/logo.png"}
+            alt="logo"
+            className="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"
+          />
           <div className={`flex flex-col gap-2`}>
-            <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold font-family-inter`}>
+            <h1
+              className={`text-2xl md:text-3xl lg:text-4xl font-bold font-family-inter`}
+            >
               {leaderboard.name}
             </h1>
             <p className={`text-base md:text-lg font-family-inter`}>
@@ -192,7 +181,9 @@ export const LeaderboardPage = (props: {
             </p>
           </div>
         </div>
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8`}>
+        <div
+          className={`grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8`}
+        >
           {/* Second place */}
           <div
             className={`p-4 md:p-5 lg:p-6 py-6 md:py-7 lg:py-8 border ring-4 ring-gray-600 border-gray-900/20 dark:border-gray-100/30 shadow-xl rounded-2xl max-w-prose bg-gradient-to-br dark:from-zinc-800/80 dark:via-zinc-900/60 dark:to-zinc-950/60 from-white/50 via-zinc-100/50 to-zinc-200/50 backdrop-blur-lg w-full flex flex-col gap-3 md:gap-4 scale-95`}
@@ -221,22 +212,27 @@ export const LeaderboardPage = (props: {
               >
                 <div className={`flex flex-col items-start`}>
                   <span className={`text-3xl font-bold font-family-inter`}>
-                    {entries[1]?.races && dayjs
-                      .duration(
-                        entries[1].races.reduce(
-                          (min, race) => (race.time < min ? race.time : min),
-                          Infinity
+                    {entries[1]?.races &&
+                      dayjs
+                        .duration(
+                          entries[1].races.reduce(
+                            (min, race) => (race.time < min ? race.time : min),
+                            Infinity
+                          )
                         )
-                      )
-                      .format("m:ss.SSS")}
+                        .format("m:ss.SSS")}
                   </span>
-                  <span className={`text-sm text-gray-500 font-family-inter`}>Best Time</span>
+                  <span className={`text-sm text-gray-500 font-family-inter`}>
+                    Best Time
+                  </span>
                 </div>
                 <div className={`flex flex-col items-start`}>
                   <span className={`text-2xl font-bold font-family-inter`}>
                     {entries[1]?.races?.length || 0}
                   </span>
-                  <span className={`text-sm text-gray-500 font-family-inter`}>Total Races</span>
+                  <span className={`text-sm text-gray-500 font-family-inter`}>
+                    Total Races
+                  </span>
                 </div>
               </div>
             </div>
@@ -268,22 +264,27 @@ export const LeaderboardPage = (props: {
               >
                 <div className={`flex flex-col items-start`}>
                   <span className={`text-3xl font-bold font-family-inter`}>
-                    {entries[0]?.races && dayjs
-                      .duration(
-                        entries[0].races.reduce(
-                          (min, race) => (race.time < min ? race.time : min),
-                          Infinity
+                    {entries[0]?.races &&
+                      dayjs
+                        .duration(
+                          entries[0].races.reduce(
+                            (min, race) => (race.time < min ? race.time : min),
+                            Infinity
+                          )
                         )
-                      )
-                      .format("m:ss.SSS")}
+                        .format("m:ss.SSS")}
                   </span>
-                  <span className={`text-sm text-gray-500 font-family-inter`}>Best Time</span>
+                  <span className={`text-sm text-gray-500 font-family-inter`}>
+                    Best Time
+                  </span>
                 </div>
                 <div className={`flex flex-col items-start`}>
                   <span className={`text-2xl font-bold font-family-inter`}>
                     {entries[0]?.races?.length || 0}
                   </span>
-                  <span className={`text-sm text-gray-500 font-family-inter`}>Total Races</span>
+                  <span className={`text-sm text-gray-500 font-family-inter`}>
+                    Total Races
+                  </span>
                 </div>
               </div>
             </div>
@@ -315,22 +316,27 @@ export const LeaderboardPage = (props: {
               >
                 <div className={`flex flex-col items-start`}>
                   <span className={`text-3xl font-bold font-family-inter`}>
-                    {entries[2]?.races && dayjs
-                      .duration(
-                        entries[2].races.reduce(
-                          (min, race) => (race.time < min ? race.time : min),
-                          Infinity
+                    {entries[2]?.races &&
+                      dayjs
+                        .duration(
+                          entries[2].races.reduce(
+                            (min, race) => (race.time < min ? race.time : min),
+                            Infinity
+                          )
                         )
-                      )
-                      .format("m:ss.SSS")}
+                        .format("m:ss.SSS")}
                   </span>
-                  <span className={`text-sm text-gray-500 font-family-inter`}>Best Time</span>
+                  <span className={`text-sm text-gray-500 font-family-inter`}>
+                    Best Time
+                  </span>
                 </div>
                 <div className={`flex flex-col items-start`}>
                   <span className={`text-2xl font-bold font-family-inter`}>
                     {entries[2]?.races?.length || 0}
                   </span>
-                  <span className={`text-sm text-gray-500 font-family-inter`}>Total Races</span>
+                  <span className={`text-sm text-gray-500 font-family-inter`}>
+                    Total Races
+                  </span>
                 </div>
               </div>
             </div>
@@ -344,9 +350,7 @@ export const LeaderboardPage = (props: {
               className={`bg-gray-900/30 overflow-hidden rounded-xl font-family-inter`}
             >
               <tr>
-                <th className="px-4 py-6 text-left font-semibold">
-                  #
-                </th>
+                <th className="px-4 py-6 text-left font-semibold">#</th>
                 <th className="px-4 py-6 text-left font-semibold">Name</th>
                 <th className="px-4 py-6 text-left font-semibold">Avg Time</th>
                 <th className="px-4 py-6 text-left font-semibold">Races</th>
@@ -370,7 +374,9 @@ export default LeaderboardPage;
 export const getServerSideProps: GetServerSideProps = async () => {
   // For now, we will use dummy data. Later, we will fetch from a database or API.
   // You can replace this with actual data fetching logic based on the leaderboard parameter.
-  const { dailyTournamentLeaderboard, dailyTournamentEntries } = await import("../../utils/types/dummy/daily");
+  const { dailyTournamentLeaderboard, dailyTournamentEntries } = await import(
+    "../../utils/types/dummy/daily"
+  );
 
   return {
     props: {

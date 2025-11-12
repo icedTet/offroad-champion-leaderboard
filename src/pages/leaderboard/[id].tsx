@@ -25,7 +25,10 @@ export default function LeaderboardDetail() {
   const sortedEntries = mergedEntries
     .map((entry) => ({
       ...entry,
-      fastestTime: entry.races.length > 0 ? Math.min(...entry.races.map((r) => r.time)) : Infinity,
+      fastestTime:
+        entry.races.length > 0
+          ? Math.min(...entry.races.map((r) => r.time))
+          : Infinity,
     }))
     .sort((a, b) => a.fastestTime - b.fastestTime);
 
@@ -67,20 +70,30 @@ export default function LeaderboardDetail() {
                   <p className="text-gray-400 text-sm">
                     All contestants must complete at least 10 levels to qualify.
                   </p>
-                  <p className="text-gray-400 text-sm">Best race time of the day wins.</p>
+                  <p className="text-gray-400 text-sm">
+                    Best race time of the day wins.
+                  </p>
                 </div>
 
                 <div className="flex gap-4 lg:gap-8 w-full lg:w-auto">
                   <div className="text-left lg:text-right flex-1 lg:flex-none">
                     <div className="text-gray-400 text-sm mb-1">Prize Pool</div>
                     <div className="flex items-center gap-2">
-                      <img src="/assets/coin.svg" alt="Prize" className="w-6 h-6 lg:w-8 lg:h-8" />
-                      <span className="text-white text-xl lg:text-2xl font-bold">5 USD</span>
+                      <img
+                        src="/assets/coin.svg"
+                        alt="Prize"
+                        className="w-6 h-6 lg:w-8 lg:h-8"
+                      />
+                      <span className="text-white text-xl lg:text-2xl font-bold">
+                        5 USD
+                      </span>
                     </div>
                   </div>
                   <div className="text-left lg:text-right flex-1 lg:flex-none">
                     <div className="text-gray-400 text-sm mb-1">Players</div>
-                    <div className="text-orange-500 text-xl lg:text-2xl font-bold">{sortedEntries.length}</div>
+                    <div className="text-orange-500 text-xl lg:text-2xl font-bold">
+                      {sortedEntries.length}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -101,13 +114,17 @@ export default function LeaderboardDetail() {
 
             {/* Standings */}
             <div className="mb-4 md:mb-6">
-              <h2 className="text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4">Standings</h2>
+              <h2 className="text-xl lg:text-2xl font-bold text-white mb-3 md:mb-4">
+                Standings
+              </h2>
               <div className="hidden lg:grid grid-cols-[80px_1fr_100px_100px_140px] items-center mb-4 px-2 md:px-4">
                 <div className="text-gray-400 text-sm text-center"></div>
                 <div className="text-gray-400 text-sm">Race</div>
                 <div className="text-gray-400 text-sm text-center">Qualify</div>
                 <div className="text-gray-400 text-sm text-center"></div>
-                <div className="text-gray-400 text-sm text-center">Best time</div>
+                <div className="text-gray-400 text-sm text-center">
+                  Best time
+                </div>
               </div>
 
               <div className="space-y-2 md:space-y-3">
@@ -151,13 +168,21 @@ export default function LeaderboardDetail() {
                   {[...Array(35)].map((_, i) => {
                     const day = i - 2;
                     if (day < 1 || day > 28) {
-                      return <div key={i} className="w-6 h-6 text-gray-600">{day < 1 ? 28 + day : day - 28}</div>;
+                      return (
+                        <div key={i} className="w-6 h-6 text-gray-600">
+                          {day < 1 ? 28 + day : day - 28}
+                        </div>
+                      );
                     }
                     return (
                       <div
                         key={i}
                         className={`w-6 h-6 flex items-center justify-center ${
-                          day === 5 ? "bg-green-500 text-white rounded-full" : day === 6 ? "bg-white text-black rounded-full" : "text-white"
+                          day === 5
+                            ? "bg-green-500 text-white rounded-full"
+                            : day === 6
+                            ? "bg-white text-black rounded-full"
+                            : "text-white"
                         }`}
                       >
                         {day}
@@ -165,7 +190,9 @@ export default function LeaderboardDetail() {
                     );
                   })}
                 </div>
-                <div className="text-white text-center mt-2 text-sm">9:00 AM EST</div>
+                <div className="text-white text-center mt-2 text-sm">
+                  9:00 AM EST
+                </div>
               </div>
             </div>
           </div>
