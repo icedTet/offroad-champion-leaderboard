@@ -48,8 +48,15 @@ export const TournamentLeaderboard = ({
 
   const displayedEntries = entries.slice(0, initialDisplayCount);
 
+  // Create array with actual entries and empty placeholders to fill initialDisplayCount
+  const rowsToDisplay = Array.from({ length: initialDisplayCount }, (_, index) => {
+    return displayedEntries[index] || null;
+  });
+
   return (
-    <div className={`${backgroundColor} border border-purple-500 rounded-lg p-3 md:p-4 lg:p-6 font-family-inter`}>
+    <div
+      className={`${backgroundColor} border border-purple-500 rounded-lg p-3 md:p-4 lg:p-6 font-family-inter`}
+    >
       <LeaderboardHeader
         title={title}
         date={date}
@@ -66,26 +73,50 @@ export const TournamentLeaderboard = ({
         <div className="text-gray-400 text-sm">Player</div>
         <div className="text-gray-400 text-sm flex justify-center">Score</div>
         <div className="text-gray-400 text-sm flex justify-center">Races</div>
-        <div className="text-gray-400 text-sm flex justify-center">Qualification</div>
+        <div className="text-gray-400 text-sm flex justify-center">
+          Qualification
+        </div>
       </div>
 
       {/* Leaderboard Rows */}
       <div>
-        {displayedEntries.map((entry, index) => (
-          <LeaderboardRow
-            key={entry.userId}
-            place={index + 1}
-            username={entry.user.username}
-            countryCode={entry.user.countryCode}
-            score={formatTime(getFastestTime(entry))}
-            races={entry.races.length}
-            qualified={entry.qualified}
-          />
-        ))}
+        {rowsToDisplay.map((entry, index) => {
+          if (entry) {
+            return (
+              <LeaderboardRow
+                key={entry.userId}
+                place={index + 1}
+                username={entry.user.username}
+                countryCode={entry.user.countryCode}
+                score={formatTime(getFastestTime(entry))}
+                races={entry.races.length}
+                qualified={entry.qualified}
+              />
+            );
+          } else {
+            // Empty placeholder row - matches LeaderboardRow styling
+            return (
+              <div
+                key={`empty-${index}`}
+                className="grid grid-cols-[60px_1fr_140px_100px_120px] items-center py-0 border- border-gray-800 last:border-b-0 font-family-inter"
+              >
+                <div className="text-gray-600 text-lg">{index + 1}</div>
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-2xl flex-shrink-0 opacity-0">🌐</span>
+                  <span className="text-gray-600 text-base truncate">—</span>
+                </div>
+                <div className="text-gray-600 text-base flex justify-center truncate">—</div>
+                <div className="text-gray-600 text-base flex justify-center truncate">—</div>
+                <div className="flex justify-center">
+                  <div className="w-6 h-6"></div>
+                </div>
+              </div>
+            );
+          }
+        })}
       </div>
 
       {/* See More Button */}
-      {entries.length > initialDisplayCount && (
         <div className="flex justify-end mt-2 md:mt-3 lg:mt-4">
           <Link href={`/leaderboard/${leaderboardId}`}>
             <button className="text-yellow-500 border border-yellow-500 px-4 py-2 rounded-full text-sm hover:bg-yellow-500 hover:text-black transition-colors font-family-inter">
@@ -93,7 +124,6 @@ export const TournamentLeaderboard = ({
             </button>
           </Link>
         </div>
-      )}
     </div>
   );
 };
