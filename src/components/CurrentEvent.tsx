@@ -79,19 +79,19 @@ export const CurrentEvent = (props: { event: TournamentEvent }) => {
           {dayjs(event.startDate).format("MMM D, YYYY h:mm A")} -{" "}
           {dayjs(event.endDate).format("MMM D, YYYY h:mm A")}
         </span>
-         {event.endDate < new Date().toISOString() ? (
-            <div className="mt-1 text-xs text-gray-100/40">
-                Ended {dayjs(event.endDate).fromNow()}
-            </div>
-            ) : event.startDate > new Date().toISOString() ? (
-            <div className="mt-1 text-xs text-gray-100/40">
-                Starts {dayjs(event.startDate).fromNow()}
-            </div>
-            ) : event.startDate <= new Date().toISOString() && event.endDate >= new Date().toISOString() ? (
+         {dayjs(event.endDate).isBefore(dayjs()) ? (
             <div className="mt-1 text-xs text-gray-100/40">
                 Ends {dayjs(event.endDate).fromNow()}
             </div>
-            
+            ) : dayjs(event.startDate).isAfter(dayjs()) ? (
+            <div className="mt-1 text-xs text-gray-100/40">
+                Starts {dayjs(event.startDate).fromNow()}
+            </div>
+            ) : dayjs(event.startDate).isSameOrBefore(dayjs()) && dayjs(event.endDate).isSameOrAfter(dayjs()) ? (
+            <div className="mt-1 text-xs text-gray-100/40">
+                Ends {dayjs(event.endDate).fromNow()}
+            </div>
+
          ) : null}
       </div>
     </div>
