@@ -38,7 +38,8 @@ export const LeaderboardHeader = ({
             {date} <span className="text-yellow-500">({type})</span>{" "}
             <span className="text-gray-300">{description}</span>
           </p>
-          <p className="text-gray-500 text-xs mt-1">Ended {endedTime}</p>
+          <p className="text-gray-500 text-xs mt-1">{ endedTime.startsWith('in') ? "Ends" : "Ended"
+            } {endedTime}</p>
           <p className="text-orange-500 text-xs font-semibold">
             {memberCount} Members
           </p>
