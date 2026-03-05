@@ -29,6 +29,11 @@ interface HomeProps {
   weeklyMultiEntries: MergedEntry[];
   monthlySingleEntries: MergedEntry[];
   monthlyMultiEntries: MergedEntry[];
+  prizes: {
+    daily: string;
+    weekly: string;
+    monthly: string;
+  };
 }
 
 export default function Home({
@@ -38,6 +43,7 @@ export default function Home({
   weeklyMultiEntries,
   monthlySingleEntries,
   monthlyMultiEntries,
+  prizes,
 }: HomeProps) {
 
   return (
@@ -73,7 +79,7 @@ export default function Home({
               description="Best times today"
               endedTime="3 hours ago"
               memberCount={dailySingleEntries.length}
-              prize="$5"
+              prize={prizes.daily}
               entries={dailySingleEntries}
               leaderboardId="daily"
               backgroundColor="bg-black"
@@ -86,7 +92,7 @@ export default function Home({
               description="Best weeks times"
               endedTime="21 hours ago"
               memberCount={weeklySingleEntries.length}
-              prize="$25"
+              prize={prizes.weekly}
               entries={weeklySingleEntries}
               leaderboardId="weekly"
               backgroundColor="bg-[#0A0520]"
@@ -99,7 +105,7 @@ export default function Home({
               description="Best months times"
               endedTime="2 days ago"
               memberCount={monthlySingleEntries.length}
-              prize="$200"
+              prize={prizes.monthly}
               entries={monthlySingleEntries}
               leaderboardId="monthly"
               backgroundColor="bg-black"
@@ -115,7 +121,7 @@ export default function Home({
               description="Best times today"
               endedTime="3 hours ago"
               memberCount={dailyMultiEntries.length}
-              prize="$5"
+              prize={prizes.daily}
               entries={dailyMultiEntries}
               leaderboardId="daily-multi"
               backgroundColor="bg-black"
@@ -128,7 +134,7 @@ export default function Home({
               description="Best weeks times"
               endedTime="3 hours ago"
               memberCount={weeklyMultiEntries.length}
-              prize="$25"
+              prize={prizes.weekly}
               entries={weeklyMultiEntries}
               leaderboardId="weekly-multi"
               backgroundColor="bg-[#0A0520]"
@@ -141,7 +147,7 @@ export default function Home({
               description="Best months times"
               endedTime="3 hours ago"
               memberCount={monthlyMultiEntries.length}
-              prize="$200"
+              prize={prizes.monthly}
               entries={monthlyMultiEntries}
               leaderboardId="monthly-multi"
               backgroundColor="bg-black"
@@ -202,8 +208,9 @@ export default function Home({
 
 export const getServerSideProps = async () => {
   try {
-    // Fetch all 6 leaderboards in parallel
+    // Fetch prizes and all 6 leaderboards in parallel
     const [
+      prizes,
       dailySPResponse,
       dailyMPResponse,
       weeklySPResponse,
@@ -211,6 +218,7 @@ export const getServerSideProps = async () => {
       monthlySPResponse,
       monthlyMPResponse,
     ] = await Promise.all([
+      tournamentApi.getPrizes(),
       tournamentApi.getLeaderboard({
         period: "daily",
         mode: "singleplayer",
@@ -291,6 +299,11 @@ export const getServerSideProps = async () => {
         weeklyMultiEntries: sortByFastestTime(weeklyMPData.entries),
         monthlySingleEntries: sortByFastestTime(monthlySPData.entries),
         monthlyMultiEntries: sortByFastestTime(monthlyMPData.entries),
+        prizes: {
+          daily: formatPrize(prizes.daily.singleplayer.first),
+          weekly: formatPrize(prizes.weekly.singleplayer.first),
+          monthly: formatPrize(prizes.monthly.singleplayer.first),
+        },
       },
     };
   } catch (error) {
@@ -305,6 +318,11 @@ export const getServerSideProps = async () => {
         weeklyMultiEntries: [],
         monthlySingleEntries: [],
         monthlyMultiEntries: [],
+        prizes: {
+          daily: "$5.00",
+          weekly: "$25.00",
+          monthly: "$300.00",
+        },
       },
     };
   }
