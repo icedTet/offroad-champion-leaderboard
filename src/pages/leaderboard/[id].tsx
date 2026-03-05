@@ -320,7 +320,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       formatPrize(prize)
     );
 
-    // Sort by fastest time (use API's bestSingleRace if available)
+    // Sort by qualification status first, then by fastest time (use API's bestSingleRace if available)
     const sortedEntries = leaderboardData.entries
       .map((entry) => ({
         ...entry,
@@ -330,7 +330,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             : Infinity
         ),
       }))
-      .sort((a, b) => a.fastestTime - b.fastestTime);
+      .sort((a, b) => {
+        // Sort by qualified status first (qualified players first)
+        if (a.qualified !== b.qualified) {
+          return a.qualified ? -1 : 1;
+        }
+        // Then sort by fastest time
+        return a.fastestTime - b.fastestTime;
+      });
 
     return {
       props: {

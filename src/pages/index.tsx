@@ -320,7 +320,7 @@ export const getServerSideProps = async () => {
       generateLeaderboardId("monthly", "multiplayer")
     );
 
-    // Sort all entries by fastest time (use API's bestSingleRace)
+    // Sort all entries by qualification status first, then by fastest time
     const sortByFastestTime = (entries: MergedEntry[]) => {
       return entries
         .map((entry) => ({
@@ -331,7 +331,14 @@ export const getServerSideProps = async () => {
               : Infinity
           ),
         }))
-        .sort((a, b) => a.fastestTime - b.fastestTime);
+        .sort((a, b) => {
+          // Sort by qualified status first (qualified players first)
+          if (a.qualified !== b.qualified) {
+            return a.qualified ? -1 : 1;
+          }
+          // Then sort by fastest time
+          return a.fastestTime - b.fastestTime;
+        });
     };
     console.log("Leaderboard data fetched and transformed successfully.",weeklySPData.entries);
 
