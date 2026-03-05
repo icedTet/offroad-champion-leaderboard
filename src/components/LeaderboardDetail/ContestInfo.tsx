@@ -22,9 +22,9 @@ export const ContestInfo = ({
       {/* Winner */}
       <div className="p-3 md:p-4 lg:p-6 border-b md:border-b-0 md:border-r border-[#3D3356]">
         <div className="text-gray-400 text-sm mb-2">WINNER</div>
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{winnerFlag}</span>
-          <span className="text-white text-base">{winnerUsername}</span>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-2xl flex-shrink-0">{winnerFlag}</span>
+          <span className="text-white text-base truncate">{winnerUsername}</span>
         </div>
       </div>
 
