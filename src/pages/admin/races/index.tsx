@@ -22,7 +22,7 @@ interface RaceValidation {
   flagged: boolean;
   flagReason: string | null;
   createdAt: string;
-  user: {
+  user?: {
     id: string;
     username: string;
     name: string;
@@ -193,9 +193,9 @@ export default function FlaggedRacesPage() {
                           <div>
                             <div className="text-sm font-medium text-white flex items-center">
                               <ExclamationTriangleIcon className="h-4 w-4 text-red-400 mr-2" />
-                              {race.user.username}
+                              {race.user?.username || 'Unknown User'}
                             </div>
-                            <div className="text-sm text-gray-400">{race.user.name}</div>
+                            <div className="text-sm text-gray-400">{race.user?.name || 'N/A'}</div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">

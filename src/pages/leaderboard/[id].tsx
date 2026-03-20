@@ -33,6 +33,11 @@ interface LeaderboardDetailProps {
   endDate: string;
   prizeAmount: string;
   qualifyingRaces: number;
+  prizes: {
+    daily: string;
+    weekly: string;
+    monthly: string;
+  };
 }
 
 export default function LeaderboardDetail({
@@ -42,6 +47,7 @@ export default function LeaderboardDetail({
   endDate,
   prizeAmount,
   qualifyingRaces,
+  prizes,
 }: LeaderboardDetailProps) {
   const router = useRouter();
 
@@ -72,7 +78,42 @@ export default function LeaderboardDetail({
       .join("");
   };
 
-  const winner = sortedEntries[0];
+  const getTournamentStatus = () => {
+    const now = dayjs();
+    const end = dayjs(endDate);
+    const start = dayjs(startDate);
+
+    if (now.isAfter(end)) {
+      const duration = now.diff(end);
+      const hours = Math.floor(duration / (1000 * 60 * 60));
+      const days = Math.floor(hours / 24);
+
+      if (days > 0) {
+        return { status: "ended", text: `Ended ${days} day${days > 1 ? 's' : ''} ago`, color: "text-red-500" };
+      } else if (hours > 0) {
+        return { status: "ended", text: `Ended ${hours} hour${hours > 1 ? 's' : ''} ago`, color: "text-red-500" };
+      } else {
+        return { status: "ended", text: "Ended recently", color: "text-red-500" };
+      }
+    } else if (now.isBefore(start)) {
+      return { status: "upcoming", text: `Starts ${start.fromNow()}`, color: "text-blue-500" };
+    } else {
+      const duration = end.diff(now);
+      const hours = Math.floor(duration / (1000 * 60 * 60));
+      const days = Math.floor(hours / 24);
+
+      if (days > 0) {
+        return { status: "active", text: `Ends in ${days} day${days > 1 ? 's' : ''}`, color: "text-green-500" };
+      } else if (hours > 0) {
+        return { status: "active", text: `Ends in ${hours} hour${hours > 1 ? 's' : ''}`, color: "text-green-500" };
+      } else {
+        return { status: "active", text: "Ends soon", color: "text-green-500" };
+      }
+    }
+  };
+
+  const tournamentStatus = getTournamentStatus();
+  const winner = sortedEntries.find(entry => entry.qualified);
 
   return (
     <div className="min-h-screen bg-[#0B0A1B] p-3 md:p-6 lg:p-8 font-family-inter">
@@ -138,10 +179,10 @@ export default function LeaderboardDetail({
               winnerUsername={winner?.user.username || "TBD"}
               winnerFlag={getCountryFlag(winner?.user.countryCode)}
               rules={[
-                "Lowest race time wins. To qualify for the tournament you need to race at lease 10 races in one day.",
-                "Best time for the day will receive $5.",
-                "Best time every week gets $25",
-                "Best time every month gets $250",
+                `Lowest race time wins. To qualify for the tournament you need to race at least ${qualifyingRaces} races.`,
+                `Best time for the day will receive ${prizes.daily}.`,
+                `Best time every week gets ${prizes.weekly}`,
+                `Best time every month gets ${prizes.monthly}`,
               ]}
             />
 
@@ -183,11 +224,14 @@ export default function LeaderboardDetail({
           <div className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-8">
               <div className="bg-purple-900/50 border border-purple-500 rounded-lg p-4 backdrop-blur-sm">
-                <div className="text-red-500 text-sm mb-2 flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  Ended 13 hours ago
+                <div className={`${tournamentStatus.color} text-sm mb-2 flex items-center gap-2`}>
+                  <div className={`w-3 h-3 rounded-full ${
+                    tournamentStatus.status === 'ended' ? 'bg-red-500' :
+                    tournamentStatus.status === 'active' ? 'bg-green-500' : 'bg-blue-500'
+                  }`}></div>
+                  {tournamentStatus.text}
                 </div>
-                <div className="text-white text-center mb-2">February 2025</div>
+                <div className="text-white text-center mb-2">{dayjs(startDate).format("MMMM YYYY")}</div>
                 <div className="grid grid-cols-7 gap-1 text-xs text-gray-400 mb-1">
                   <div>S</div>
                   <div>M</div>
@@ -276,7 +320,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       formatPrize(prize)
     );
 
-    // Sort by fastest time (use API's bestSingleRace if available)
+    // Sort by qualification status first, then by fastest time (use API's bestSingleRace if available)
     const sortedEntries = leaderboardData.entries
       .map((entry) => ({
         ...entry,
@@ -286,7 +330,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             : Infinity
         ),
       }))
-      .sort((a, b) => a.fastestTime - b.fastestTime);
+      .sort((a, b) => {
+        // Sort by qualified status first (qualified players first)
+        if (a.qualified !== b.qualified) {
+          return a.qualified ? -1 : 1;
+        }
+        // Then sort by fastest time
+        return a.fastestTime - b.fastestTime;
+      });
 
     return {
       props: {
@@ -296,6 +347,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         endDate: apiResponse.tournament.endDate,
         prizeAmount: formatPrize(prize),
         qualifyingRaces: apiResponse.tournament.qualifyingRaces,
+        prizes: {
+          daily: formatPrize(prizes.daily.singleplayer.first),
+          weekly: formatPrize(prizes.weekly.singleplayer.first),
+          monthly: formatPrize(prizes.monthly.singleplayer.first),
+        },
       },
     };
   } catch (error) {
@@ -309,6 +365,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         endDate: new Date().toISOString(),
         prizeAmount: "$0.00",
         qualifyingRaces: 10,
+        prizes: {
+          daily: "$5.00",
+          weekly: "$25.00",
+          monthly: "$300.00",
+        },
       },
     };
   }

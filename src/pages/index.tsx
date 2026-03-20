@@ -11,6 +11,7 @@ import {
   generateLeaderboardId,
   formatPrize,
 } from "../utils/apiTransformers";
+import dayjs from "dayjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,19 @@ interface HomeProps {
   weeklyMultiEntries: MergedEntry[];
   monthlySingleEntries: MergedEntry[];
   monthlyMultiEntries: MergedEntry[];
+  prizes: {
+    daily: string;
+    weekly: string;
+    monthly: string;
+  };
+  tournamentDates: {
+    dailySP: { startDate: string; endDate: string };
+    dailyMP: { startDate: string; endDate: string };
+    weeklySP: { startDate: string; endDate: string };
+    weeklyMP: { startDate: string; endDate: string };
+    monthlySP: { startDate: string; endDate: string };
+    monthlyMP: { startDate: string; endDate: string };
+  };
 }
 
 export default function Home({
@@ -38,7 +52,42 @@ export default function Home({
   weeklyMultiEntries,
   monthlySingleEntries,
   monthlyMultiEntries,
+  prizes,
+  tournamentDates,
 }: HomeProps) {
+
+  const getTimeStatus = (endDate: string) => {
+    const now = dayjs();
+    const end = dayjs(endDate);
+
+    if (now.isAfter(end)) {
+      const duration = now.diff(end);
+      const hours = Math.floor(duration / (1000 * 60 * 60));
+      const days = Math.floor(hours / 24);
+
+      if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ago`;
+      } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      } else {
+        const minutes = Math.floor(duration / (1000 * 60));
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      }
+    } else {
+      const duration = end.diff(now);
+      const hours = Math.floor(duration / (1000 * 60 * 60));
+      const days = Math.floor(hours / 24);
+
+      if (days > 0) {
+        return `in ${days} day${days > 1 ? 's' : ''}`;
+      } else if (hours > 0) {
+        return `in ${hours} hour${hours > 1 ? 's' : ''}`;
+      } else {
+        const minutes = Math.floor(duration / (1000 * 60));
+        return `in ${minutes} minute${minutes > 1 ? 's' : ''}`;
+      }
+    }
+  };
 
   return (
     <div
@@ -68,12 +117,12 @@ export default function Home({
           <div className="flex flex-col gap-4 md:gap-5 lg:gap-6">
             <TournamentLeaderboard
               title="Single-Player: Daily Tournament:"
-              date="2/5/2024"
+              date={dayjs(tournamentDates.dailySP.startDate).format("M/D/YYYY")}
               type="Time Trials"
               description="Best times today"
-              endedTime="3 hours ago"
+              endedTime={getTimeStatus(tournamentDates.dailySP.endDate)}
               memberCount={dailySingleEntries.length}
-              prize="$5"
+              prize={prizes.daily}
               entries={dailySingleEntries}
               leaderboardId="daily"
               backgroundColor="bg-black"
@@ -81,12 +130,12 @@ export default function Home({
 
             <TournamentLeaderboard
               title="Single-Player: Weekly Tournament"
-              date="2/5/2024"
+              date={dayjs(tournamentDates.weeklySP.startDate).format("M/D/YYYY")}
               type="Time Trials"
               description="Best weeks times"
-              endedTime="21 hours ago"
+              endedTime={getTimeStatus(tournamentDates.weeklySP.endDate)}
               memberCount={weeklySingleEntries.length}
-              prize="$25"
+              prize={prizes.weekly}
               entries={weeklySingleEntries}
               leaderboardId="weekly"
               backgroundColor="bg-[#0A0520]"
@@ -94,12 +143,12 @@ export default function Home({
 
             <TournamentLeaderboard
               title="Single-Player:  Monthly Tournament:"
-              date="2/1/2024"
+              date={dayjs(tournamentDates.monthlySP.startDate).format("M/D/YYYY")}
               type="Time Trials"
               description="Best months times"
-              endedTime="2 days ago"
+              endedTime={getTimeStatus(tournamentDates.monthlySP.endDate)}
               memberCount={monthlySingleEntries.length}
-              prize="$200"
+              prize={prizes.monthly}
               entries={monthlySingleEntries}
               leaderboardId="monthly"
               backgroundColor="bg-black"
@@ -110,12 +159,12 @@ export default function Home({
           <div className="flex flex-col gap-4 md:gap-5 lg:gap-6">
             <TournamentLeaderboard
               title="Multi-Player: Daily Tournament:"
-              date="2/5/2024"
+              date={dayjs(tournamentDates.dailyMP.startDate).format("M/D/YYYY")}
               type="Time Trials"
               description="Best times today"
-              endedTime="3 hours ago"
+              endedTime={getTimeStatus(tournamentDates.dailyMP.endDate)}
               memberCount={dailyMultiEntries.length}
-              prize="$5"
+              prize={prizes.daily}
               entries={dailyMultiEntries}
               leaderboardId="daily-multi"
               backgroundColor="bg-black"
@@ -123,12 +172,12 @@ export default function Home({
 
             <TournamentLeaderboard
               title="Multi-Player: Weekly Tournament:"
-              date="2/5/2024"
+              date={dayjs(tournamentDates.weeklyMP.startDate).format("M/D/YYYY")}
               type="Time Trials"
               description="Best weeks times"
-              endedTime="3 hours ago"
+              endedTime={getTimeStatus(tournamentDates.weeklyMP.endDate)}
               memberCount={weeklyMultiEntries.length}
-              prize="$25"
+              prize={prizes.weekly}
               entries={weeklyMultiEntries}
               leaderboardId="weekly-multi"
               backgroundColor="bg-[#0A0520]"
@@ -136,12 +185,12 @@ export default function Home({
 
             <TournamentLeaderboard
               title="Multi-Player: Monthly Tournament"
-              date="2/5/2024"
+              date={dayjs(tournamentDates.monthlyMP.startDate).format("M/D/YYYY")}
               type="Time Trials"
               description="Best months times"
-              endedTime="3 hours ago"
+              endedTime={getTimeStatus(tournamentDates.monthlyMP.endDate)}
               memberCount={monthlyMultiEntries.length}
-              prize="$200"
+              prize={prizes.monthly}
               entries={monthlyMultiEntries}
               leaderboardId="monthly-multi"
               backgroundColor="bg-black"
@@ -202,8 +251,9 @@ export default function Home({
 
 export const getServerSideProps = async () => {
   try {
-    // Fetch all 6 leaderboards in parallel
+    // Fetch prizes and all 6 leaderboards in parallel
     const [
+      prizes,
       dailySPResponse,
       dailyMPResponse,
       weeklySPResponse,
@@ -211,6 +261,7 @@ export const getServerSideProps = async () => {
       monthlySPResponse,
       monthlyMPResponse,
     ] = await Promise.all([
+      tournamentApi.getPrizes(),
       tournamentApi.getLeaderboard({
         period: "daily",
         mode: "singleplayer",
@@ -269,7 +320,7 @@ export const getServerSideProps = async () => {
       generateLeaderboardId("monthly", "multiplayer")
     );
 
-    // Sort all entries by fastest time (use API's bestSingleRace)
+    // Sort all entries by qualification status first, then by fastest time
     const sortByFastestTime = (entries: MergedEntry[]) => {
       return entries
         .map((entry) => ({
@@ -280,9 +331,24 @@ export const getServerSideProps = async () => {
               : Infinity
           ),
         }))
-        .sort((a, b) => a.fastestTime - b.fastestTime);
+        .sort((a, b) => {
+          // Sort by qualified status first (qualified players first)
+          if (a.qualified !== b.qualified) {
+            return a.qualified ? -1 : 1;
+          }
+          // Then sort by fastest time
+          return a.fastestTime - b.fastestTime;
+        });
     };
     console.log("Leaderboard data fetched and transformed successfully.",weeklySPData.entries);
+
+    const dailySPApi = dailySPResponse as LeaderboardResponse;
+    const dailyMPApi = dailyMPResponse as LeaderboardResponse;
+    const weeklySPApi = weeklySPResponse as LeaderboardResponse;
+    const weeklyMPApi = weeklyMPResponse as LeaderboardResponse;
+    const monthlySPApi = monthlySPResponse as LeaderboardResponse;
+    const monthlyMPApi = monthlyMPResponse as LeaderboardResponse;
+
     return {
       props: {
         dailySingleEntries: sortByFastestTime(dailySPData.entries),
@@ -291,10 +357,25 @@ export const getServerSideProps = async () => {
         weeklyMultiEntries: sortByFastestTime(weeklyMPData.entries),
         monthlySingleEntries: sortByFastestTime(monthlySPData.entries),
         monthlyMultiEntries: sortByFastestTime(monthlyMPData.entries),
+        prizes: {
+          daily: formatPrize(prizes.daily.singleplayer.first),
+          weekly: formatPrize(prizes.weekly.singleplayer.first),
+          monthly: formatPrize(prizes.monthly.singleplayer.first),
+        },
+        tournamentDates: {
+          dailySP: { startDate: dailySPApi.tournament.startDate, endDate: dailySPApi.tournament.endDate },
+          dailyMP: { startDate: dailyMPApi.tournament.startDate, endDate: dailyMPApi.tournament.endDate },
+          weeklySP: { startDate: weeklySPApi.tournament.startDate, endDate: weeklySPApi.tournament.endDate },
+          weeklyMP: { startDate: weeklyMPApi.tournament.startDate, endDate: weeklyMPApi.tournament.endDate },
+          monthlySP: { startDate: monthlySPApi.tournament.startDate, endDate: monthlySPApi.tournament.endDate },
+          monthlyMP: { startDate: monthlyMPApi.tournament.startDate, endDate: monthlyMPApi.tournament.endDate },
+        },
       },
     };
   } catch (error) {
     console.error("Failed to fetch leaderboard data:", error);
+
+    const now = new Date().toISOString();
 
     // Return empty arrays on error
     return {
@@ -305,6 +386,19 @@ export const getServerSideProps = async () => {
         weeklyMultiEntries: [],
         monthlySingleEntries: [],
         monthlyMultiEntries: [],
+        prizes: {
+          daily: "$5.00",
+          weekly: "$25.00",
+          monthly: "$300.00",
+        },
+        tournamentDates: {
+          dailySP: { startDate: now, endDate: now },
+          dailyMP: { startDate: now, endDate: now },
+          weeklySP: { startDate: now, endDate: now },
+          weeklyMP: { startDate: now, endDate: now },
+          monthlySP: { startDate: now, endDate: now },
+          monthlyMP: { startDate: now, endDate: now },
+        },
       },
     };
   }
