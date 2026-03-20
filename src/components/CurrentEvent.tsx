@@ -1,7 +1,11 @@
 import dayjs from "dayjs";
 import { TournamentEvent } from "../utils/types/events";
 import relativeTime from "dayjs/plugin/relativeTime";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 dayjs.extend(relativeTime);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 
 const determineAppropriateColor = (event: TournamentEvent) => {

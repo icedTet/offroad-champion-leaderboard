@@ -118,6 +118,9 @@ export default function BetsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('open');
   const [page, setPage] = useState(0);
   const [taxYear, setTaxYear] = useState(2026);
+  const [betsPeriod, setBetsPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
+  const [revenuePeriod, setRevenuePeriod] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
+  const [taxStatus, setTaxStatus] = useState<'pending' | 'filed' | 'completed'>('pending');
   const limit = 10;
 
   // Reset page when changing tabs
@@ -133,18 +136,18 @@ export default function BetsPage() {
   const paginatedTaxForms = taxForms.slice(page * limit, (page + 1) * limit);
   const taxTotalPages = Math.ceil(taxForms.length / limit);
 
-  // Calculate metrics
-  const weeklyTotalBets = bets.reduce(
-    (sum, bet) => sum + bet.player1Wager + bet.player2Wager,
-    0
-  );
+  // Calculate metrics based on selected period
   const houseCutPercentage = 0.25;
-  const weeklyRevenue = Math.round(
-    bets.reduce((sum, bet) => {
-      const pot = bet.player1Wager + bet.player2Wager;
-      return sum + pot * houseCutPercentage;
-    }, 0)
-  );
+
+  // Mock data for different periods
+  const betsMetrics = {
+    weekly: { totalBets: 4200, revenue: 1050 },
+    monthly: { totalBets: 18500, revenue: 4625 },
+    yearly: { totalBets: 225000, revenue: 56250 },
+  };
+
+  const totalBets = betsMetrics[betsPeriod].totalBets;
+  const revenue = betsMetrics[revenuePeriod].revenue;
 
   const calculatePot = (bet: Bet) => bet.player1Wager + bet.player2Wager;
   const calculateHousePot = (bet: Bet) => Math.round(calculatePot(bet) * houseCutPercentage);
@@ -216,29 +219,35 @@ export default function BetsPage() {
         {activeTab !== 'tax' ? (
           <div className="flex gap-8">
             <div className="flex items-center gap-3">
-              <button className="w-8 h-8 bg-gray-600 hover:bg-gray-500 flex items-center justify-center">
-                <ChevronLeftIcon className="w-5 h-5 text-white" />
-              </button>
+              <select
+                value={betsPeriod}
+                onChange={(e) => setBetsPeriod(e.target.value as 'weekly' | 'monthly' | 'yearly')}
+                className="bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              >
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
               <div className="bg-black border border-gray-600 px-6 py-2 rounded">
-                <span className="text-white mr-2">Weekly Total Bets:</span>
-                <span className="text-green-400 font-semibold">${weeklyTotalBets.toLocaleString()}</span>
+                <span className="text-white mr-2">Total Bets:</span>
+                <span className="text-green-400 font-semibold">${totalBets.toLocaleString()}</span>
               </div>
-              <button className="w-8 h-8 bg-gray-600 hover:bg-gray-500 flex items-center justify-center">
-                <ChevronRightIcon className="w-5 h-5 text-white" />
-              </button>
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="w-8 h-8 bg-gray-600 hover:bg-gray-500 flex items-center justify-center">
-                <ChevronLeftIcon className="w-5 h-5 text-white" />
-              </button>
+              <select
+                value={revenuePeriod}
+                onChange={(e) => setRevenuePeriod(e.target.value as 'weekly' | 'monthly' | 'yearly')}
+                className="bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              >
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
               <div className="bg-black border border-gray-600 px-6 py-2 rounded">
-                <span className="text-white mr-2">Weekly Revenue:</span>
-                <span className="text-green-400 font-semibold">${weeklyRevenue.toLocaleString()}</span>
+                <span className="text-white mr-2">Revenue:</span>
+                <span className="text-green-400 font-semibold">${revenue.toLocaleString()}</span>
               </div>
-              <button className="w-8 h-8 bg-gray-600 hover:bg-gray-500 flex items-center justify-center">
-                <ChevronRightIcon className="w-5 h-5 text-white" />
-              </button>
             </div>
           </div>
         ) : (
@@ -263,15 +272,18 @@ export default function BetsPage() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="w-8 h-8 bg-gray-600 hover:bg-gray-500 flex items-center justify-center">
-                <ChevronLeftIcon className="w-5 h-5 text-white" />
-              </button>
+              <select
+                value={taxStatus}
+                onChange={(e) => setTaxStatus(e.target.value as 'pending' | 'filed' | 'completed')}
+                className="bg-gray-700 text-white px-4 py-2 rounded border border-gray-600 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 capitalize"
+              >
+                <option value="pending">Pending</option>
+                <option value="filed">Filed</option>
+                <option value="completed">Completed</option>
+              </select>
               <div className="bg-black border border-gray-600 px-6 py-2 rounded">
                 <span className="text-white">Tax Status</span>
               </div>
-              <button className="w-8 h-8 bg-gray-600 hover:bg-gray-500 flex items-center justify-center">
-                <ChevronRightIcon className="w-5 h-5 text-white" />
-              </button>
             </div>
           </div>
         )}
